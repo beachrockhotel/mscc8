@@ -1,43 +1,45 @@
-name: Docker
+name: Python application CI Pipeline
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  build-and-push-to-yc:
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Build docker image
-        run: docker build . --file Dockerfile --tag cr.yandex/${{ secrets.YC_REGISTRY_ID }}/delivery-service:latest
-
-
-      - name: Login to YC Registry
-        uses: docker/login-action@v3.0.0
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          registry: cr.yandex
-          username: json_key
-          password: ${{ secrets.YC_KEYS }}
+          python-version: '3.8'
 
-      - name: Push tag to YC Registry
-        run: docker push cr.yandex/${{ secrets.YC_REGISTRY_ID }}/delivery-service:latest
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build-and-push-to-yc
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Run migrations (optional)
+        run: |
+          # Замените следующую строку командой для выполнения ваших миграций, если это необходимо
+          # alembic upgrade head
 
-      - name: Deploy serverless container
-        uses: yc-actions/yc-sls-container-deploy@v1
-        with:
-          yc-sa-json-credentials: ${{ secrets.YC_KEYS }}
-          container-name: ${{ secrets.YC_CONTAINER_NAME }}
-          folder-id: ${{ secrets.YC_FOLDER_ID }}
-          revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/delivery-service:latest
-          revision-service-account-id: ${{ secrets.YC_SA_ID }}
+      - name: Run tests
+        env:
+          # Убедитесь, что данная переменная окружения соответствует вашей конфигурации
+          POSTGRES_URL: postgresql://postgres:password@localhost:5432/postgres
+        run: |
+          pytest ./tests
