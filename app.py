@@ -9,7 +9,8 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/Dmitriy/Desktop/mscc/data/food_ordering.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///food_ordering.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dmitriy:321123@localhost/club'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dmitriy:321123@localhost/club'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://dmitriy:321123@localhost/club')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)

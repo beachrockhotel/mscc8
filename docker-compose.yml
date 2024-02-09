@@ -20,10 +20,6 @@ services:
       - DATABASE_URL=postgresql://dmitriy:321123@db/club
     depends_on:
       - db
-      - prometheus
-      - loki
-    volumes:
-      - .:/app
 
   prometheus:
     image: prom/prometheus:latest
@@ -31,8 +27,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
-    depends_on:
-      - app
 
   grafana:
     image: grafana/grafana:latest
