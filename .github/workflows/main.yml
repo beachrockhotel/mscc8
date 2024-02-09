@@ -34,12 +34,9 @@ jobs:
 
       - name: Run migrations (optional)
         run: |
-          # Замените следующую строку командой для выполнения ваших миграций, если это необходимо
-          # alembic upgrade head
 
       - name: Run tests
         env:
-          # Убедитесь, что данная переменная окружения соответствует вашей конфигурации
-          POSTGRES_URL: postgresql://postgres:password@localhost:5432/postgres
+          POSTGRES_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_PORT }}/${{ secrets.POSTGRES_DB }}
         run: |
           pytest ./tests
