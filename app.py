@@ -15,7 +15,7 @@ db.init_app(app)
 
 is_db_initialized = False
 
-keycloakid = KeycloakOpenID(server_url='http://keycloak:8080/', client_id='mscc', realm_name='cc', client_secret_key='sjftvpMkf1t5IEl0bw0IXwjjIE0HXkOq')
+keycloakid = KeycloakOpenID(server_url='http://keycloak:8080/', client_id='mscc', realm_name='cc', client_secret_key='Gxv4BYXxi5UXFCalPKyU4MmkiLr39Wop')
 
 token = ''
 
@@ -57,7 +57,7 @@ def home():
 
 @app.route('/menu', methods=['POST'])
 def add_menu_item():
-    if check_user_roles():
+    if check_user_roles() != 'error':
         data = request.json
         name = data.get('name')
         price = data.get('price')
@@ -72,7 +72,7 @@ def add_menu_item():
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    if check_user_roles():
+    if check_user_roles() != 'error':
         menu_items = MenuItem.query.all()
         return jsonify(menu=[{'id': item.id, 'name': item.name, 'price': item.price} for item in menu_items])
     else:
@@ -102,7 +102,7 @@ def make_order():
 
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    if check_user_roles():
+    if check_user_roles() != 'error':
         orders = Order.query.all()
         return jsonify(orders=[
             {'id': order.id, 'items': order.items, 'total_price': order.total_price, 'order_time': order.order_time} for
@@ -124,7 +124,7 @@ def reserve_seat():
 
 @app.route('/reservations', methods=['GET'])
 def get_reservations():
-    if check_user_roles():
+    if check_user_roles() != 'error':
         reservations = Reservation.query.all()
         reservations_list = [
             {
