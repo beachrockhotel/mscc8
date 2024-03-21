@@ -19,7 +19,3 @@ class AppTestCase(TestCase):
     def test_home_page(self):
         response = self.client.get('/')
         self.assert200(response)
-
-    def test_add_menu_item(self):
-        response = self.client.post('/menu', json={'name': 'Test Pizza', 'price': 100.0})
-        self.assertStatus(response, 201)

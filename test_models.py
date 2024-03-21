@@ -18,7 +18,7 @@ class ModelsTestCase(unittest.TestCase):
 
     def test_menu_item_model(self):
         with app.app_context():
-            db.session.query(MenuItem).delete() # Очищаем таблицу перед добавлением
+            db.session.query(MenuItem).delete()
             item = MenuItem(name="Test Pizza", price=100.0)
             db.session.add(item)
             db.session.commit()
